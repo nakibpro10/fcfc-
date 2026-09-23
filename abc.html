@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>TWallpaper Light + Dark</title>
+
+  <!-- TWallpaper CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/twallpaper@2.1.2/dist/style.css"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family:
+        Arial,
+        "Noto Sans Bengali",
+        sans-serif;
+
+      background: #000;
+    }
+
+    /* =========================================
+       WALLPAPER
+    ========================================== */
+
+    #wallpaper {
+      position: fixed;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      z-index: 0;
+
+      overflow: hidden;
+
+      pointer-events: none;
+    }
+
+    /* =========================================
+       UI
+    ========================================== */
+
+    .content {
+      position: relative;
+
+      z-index: 10;
+
+      width: 100%;
+      height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      color: #111;
+
+      transition: color 0.3s ease;
+    }
+
+    body.dark .content {
+      color: #fff;
+    }
+
+    .content h1 {
+      margin: 0 0 10px;
+
+      font-size: 52px;
+
+      font-weight: 800;
+
+      letter-spacing: -1px;
+
+      text-shadow:
+        0 3px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    .content p {
+      margin: 0;
+
+      font-size: 18px;
+
+      opacity: 0.82;
+
+      text-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.16);
+    }
+
+    /* =========================================
+       MODE SWITCH
+    ========================================== */
+
+    .theme-switch {
+      position: fixed;
+
+      top: 22px;
+      right: 22px;
+
+      z-index: 100;
+
+      display: flex;
+      gap: 5px;
+
+      padding: 6px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(255, 255, 255, 0.58);
+
+      border:
+        1px solid rgba(255, 255, 255, 0.45);
+
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.12);
+
+      transition:
+        background 0.3s ease,
+        border-color 0.3s ease;
+    }
+
+    body.dark .theme-switch {
+      background:
+        rgba(16, 16, 22, 0.78);
+
+      border-color:
+        rgba(255, 255, 255, 0.10);
+
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .theme-btn {
+      border: 0;
+      outline: 0;
+
+      cursor: pointer;
+
+      padding: 10px 15px;
+
+      border-radius: 999px;
+
+      background: transparent;
+
+      color: #222;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+      transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        transform 0.2s ease;
+    }
+
+    body.dark .theme-btn {
+      color: #ddd;
+    }
+
+    .theme-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .theme-btn.active {
+      background:
+        rgba(255, 255, 255, 0.94);
+
+      color: #111;
+
+      box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.10);
+    }
+
+    body.dark .theme-btn.active {
+      background:
+        rgba(255, 255, 255, 0.12);
+
+      color: #fff;
+
+      box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* =========================================
+       INFO
+    ========================================== */
+
+    .mode-info {
+      margin-top: 24px;
+
+      padding: 10px 16px;
+
+      border-radius: 14px;
+
+      background:
+        rgba(255, 255, 255, 0.28);
+
+      border:
+        1px solid rgba(255, 255, 255, 0.34);
+
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
+      font-size: 14px;
+
+      transition:
+        background 0.3s ease,
+        border-color 0.3s ease;
+    }
+
+    body.dark .mode-info {
+      background:
+        rgba(0, 0, 0, 0.22);
+
+      border-color:
+        rgba(255, 255, 255, 0.10);
+    }
+
+    /* =========================================
+       MOBILE
+    ========================================== */
+
+    @media (max-width: 600px) {
+      .content h1 {
+        font-size: 40px;
+      }
+
+      .content p {
+        font-size: 15px;
+      }
+
+      .theme-switch {
+        top: 14px;
+        right: 14px;
+      }
+
+      .theme-btn {
+        padding: 9px 11px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================
+       TWallpaper Container
+  ========================================== -->
+
+  <div
+    id="wallpaper"
+    class="tw-wrap"
+  ></div>
+
+
+  <!-- =========================================
+       Theme Switch
+  ========================================== -->
+
+  <div class="theme-switch">
+
+    <button
+      id="lightBtn"
+      class="theme-btn active"
+      type="button"
+    >
+      ☀️ Light
+    </button>
+
+    <button
+      id="darkBtn"
+      class="theme-btn"
+      type="button"
+    >
+      🌙 Dark
+    </button>
+
+  </div>
+
+
+  <!-- =========================================
+       Demo Content
+  ========================================== -->
+
+  <main class="content">
+
+    <h1>
+      TWallpaper
+    </h1>
+
+    <p>
+      Telegram-style animated wallpaper
+    </p>
+
+    <div class="mode-info">
+      <span id="modeText">
+        বর্তমান মোড: Light
+      </span>
+    </div>
+
+  </main>
+
+
+  <!-- =========================================
+       TWallpaper JS
+  ========================================== -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/twallpaper@2.1.2/dist/index.umd.js">
+  </script>
+
+
+  <script>
+    /* =========================================
+       TWallpaper Configuration
+    ========================================== */
+
+    const lightConfig = {
+      fps: 40,
+
+      tails: 90,
+
+      animate: true,
+
+      scrollAnimate: true,
+
+      colors: [
+        "#DBDDBB",
+        "#6BA587",
+        "#D5D88D",
+        "#88B884"
+      ],
+
+      pattern: {
+        image:
+          "https://twallpaper.js.org/patterns/beach.svg",
+
+        background:
+          "#000000",
+
+        blur:
+          0,
+
+        size:
+          "360px",
+
+        opacity:
+          0.6,
+
+        mask:
+          false
+      },
+
+      screenOverlayOpacity:
+        0
+    };
+
+
+    const darkConfig = {
+      fps: 40,
+
+      tails: 90,
+
+      animate: true,
+
+      scrollAnimate: true,
+
+      colors: [
+        "#5A565D",
+        "#4F5363",
+        "#2A3337",
+        "#29130F"
+      ],
+
+      pattern: {
+        image:
+          "https://twallpaper.js.org/patterns/beach.svg",
+
+        background:
+          "#06070b",
+
+        blur:
+          0,
+
+        size:
+          "360px",
+
+        opacity:
+          0.6,
+
+        mask:
+          false
+      },
+
+      screenOverlayOpacity:
+        0
+    };
+
+
+    /* =========================================
+       DOM
+    ========================================== */
+
+    const container =
+      document.getElementById(
+        "wallpaper"
+      );
+
+    const lightBtn =
+      document.getElementById(
+        "lightBtn"
+      );
+
+    const darkBtn =
+      document.getElementById(
+        "darkBtn"
+      );
+
+    const modeText =
+      document.getElementById(
+        "modeText"
+      );
+
+
+    /* =========================================
+       CREATE WALLPAPER
+    ========================================== */
+
+    const wallpaper =
+      new TWallpaper.TWallpaper(
+        container,
+        {
+          fps:
+            lightConfig.fps,
+
+          tails:
+            lightConfig.tails,
+
+          animate:
+            lightConfig.animate,
+
+          scrollAnimate:
+            lightConfig.scrollAnimate,
+
+          colors:
+            lightConfig.colors,
+
+          pattern:
+            lightConfig.pattern
+        }
+      );
+
+
+    /* =========================================
+       INITIALIZE
+    ========================================== */
+
+    wallpaper.init();
+
+
+    /* =========================================
+       APPLY CONFIG FUNCTION
+    ========================================== */
+
+    function applyConfig(config) {
+
+      /* Colors */
+      wallpaper.updateColors(
+        config.colors
+      );
+
+
+      /* FPS */
+      wallpaper.updateFrametime(
+        config.fps
+      );
+
+
+      /* Tails */
+      wallpaper.updateTails(
+        config.tails
+      );
+
+
+      /* Animation */
+      wallpaper.animate(
+        config.animate
+      );
+
+
+      /* Scroll Animation */
+      wallpaper.scrollAnimate(
+        config.scrollAnimate
+      );
+
+
+      /* Pattern */
+      wallpaper.updatePattern({
+        image:
+          config.pattern.image,
+
+        background:
+          config.pattern.background,
+
+        blur:
+          config.pattern.blur,
+
+        size:
+          config.pattern.size,
+
+        opacity:
+          config.pattern.opacity,
+
+        mask:
+          config.pattern.mask
+      });
+    }
+
+
+    /* =========================================
+       LIGHT MODE
+    ========================================== */
+
+    function setLightMode() {
+
+      document.body.classList.remove(
+        "dark"
+      );
+
+      lightBtn.classList.add(
+        "active"
+      );
+
+      darkBtn.classList.remove(
+        "active"
+      );
+
+      modeText.textContent =
+        "বর্তমান মোড: Light";
+
+
+      applyConfig(
+        lightConfig
+      );
+    }
+
+
+    /* =========================================
+       DARK MODE
+    ========================================== */
+
+    function setDarkMode() {
+
+      document.body.classList.add(
+        "dark"
+      );
+
+      darkBtn.classList.add(
+        "active"
+      );
+
+      lightBtn.classList.remove(
+        "active"
+      );
+
+      modeText.textContent =
+        "বর্তমান মোড: Dark";
+
+
+      applyConfig(
+        darkConfig
+      );
+    }
+
+
+    /* =========================================
+       EVENTS
+    ========================================== */
+
+    lightBtn.addEventListener(
+      "click",
+      setLightMode
+    );
+
+    darkBtn.addEventListener(
+      "click",
+      setDarkMode
+    );
+
+
+    /* =========================================
+       INITIAL MODE
+    ========================================== */
+
+    setLightMode();
+  </script>
+
+</body>
+</html>
